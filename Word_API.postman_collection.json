@@ -1,0 +1,3660 @@
+{
+	"info": {
+		"_postman_id": "053991b4-43fa-43b2-840a-9115a4a445f8",
+		"name": "Word API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21537334"
+	},
+	"item": [
+		{
+			"name": "Get a word",
+			"item": [
+				{
+					"name": "Input tests",
+					"item": [
+						{
+							"name": "Happy path",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.json).to.include(['results', 'definition', 'partOfSpeech', 'synonyms', 'typeOf', 'derivation']);",
+											"    });",
+											"",
+											"pm.globals.get(\"variable_key\")",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://{{host}}/words/{{ok_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{ok_word}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path upper case",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var body = pm.response.text()",
+											"    pm.expect(body.includes(['results', 'definition', 'partOfSpeech', 'synonyms', 'typeOf', 'derivation']))",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var ok_word = pm.variables.replaceIn('{{$randomColor}}')",
+											"pm.environment.set('ok_word_upper', ok_word.toUpperCase())"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://{{host}}/words/{{ok_word_upper}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{ok_word_upper}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Non-existent word",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var word = pm.variables.replaceIn('{{$randomColor}}')",
+											"var non_existent_word = word.repeat(2)",
+											"pm.environment.set('non_existent_word', non_existent_word)",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"});",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.success).to.eql(false);",
+											"    pm.expect(responseJson.message).to.eql('word not found');",
+											"    });",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{non_existent_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{non_existent_word}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "No word",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"});",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.success).to.eql(false);",
+											"    pm.expect(responseJson.message).to.eql('Word is required.');",
+											"    });",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Word is number",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('word_number', pm.variables.replaceIn('{{$randomInt}}'))"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200 or 400\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200,404]);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"});",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    if (pm.response.status == 200) {",
+											"         pm.expect(pm.response.json).to.include(['results', 'definition', 'partOfSpeech', 'synonyms', 'typeOf', 'derivation'])",
+											"    }",
+											"    else if (pm.response.status == 404) {",
+											"        var responseJson = pm.response.json();",
+											"        pm.expect(responseJson.success).to.eql(false);",
+											"        pm.expect(responseJson.message).to.eql('word not found');",
+											"}",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{word_number}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{word_number}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Russian word",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.expect(pm.response.code).to.eql(404);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"});",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.success).to.eql(false);",
+											"    pm.expect(responseJson.message).to.eql('word not found');",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('word_russian', 'слово')",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{word_russian}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{word_russian}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Trying to reach max length",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var lowerlett = pm.variables.replaceIn('{{$randomColor}}')",
+											"var longw = lowerlett.repeat(1000)",
+											"pm.environment.set('long_word', longw)",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{long_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{long_word}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Word is single symbol",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('short_word', 'a')",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.json).to.include(['results', 'definition', 'partOfSpeech', 'synonyms', 'typeOf', 'derivation']);",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{short_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{short_word}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Word of special characters",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const characters ='!@#$%^&*()_-=+/?,.<>\"~`;:';",
+											"var word_spchar= Math.random().toString(10)",
+											"pm.environment.set('word_spchar', word_spchar)   "
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{word_spchar}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{word_spchar}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Headers tests",
+					"item": [
+						{
+							"name": "No auth key value",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.message).to.eql('Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info.');",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{ok_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{ok_word}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "No auth key",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.message).to.eql('Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info.');",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{ok_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{ok_word}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "No host in header",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.json).to.include(['results', 'definition', 'partOfSpeech', 'synonyms', 'typeOf', 'derivation']);",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{ok_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{ok_word}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Wrong host in header",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "https://wordsapiv1.p.mashape.com",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{ok_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{ok_word}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Wrong auth key",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.message).to.eql('You are not subscribed to this API.');",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{wrong_auth_key}}",
+										"type": "text"
+									},
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/{{ok_word}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"{{ok_word}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Wrong request from the docs",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									"",
+									"pm.test(\"Response json structure test\", function() {",
+									"    pm.expect(pm.response.json).to.include(['results', 'definition', 'partOfSpeech', 'synonyms', 'typeOf', 'derivation']);",
+									"    });",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "https://wordsapiv1.p.mashape.com",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-RapidAPI-Key",
+								"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://wordsapiv1.p.mashape.com/words/{{ok_word}}",
+							"protocol": "https",
+							"host": [
+								"wordsapiv1",
+								"p",
+								"mashape",
+								"com"
+							],
+							"path": [
+								"words",
+								"{{ok_word}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Wrong request and header from the docs",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									"",
+									"pm.test(\"Response json structure test\", function() {",
+									"    pm.expect(pm.response.json).to.include(['results', 'definition', 'partOfSpeech', 'synonyms', 'typeOf', 'derivation']);",
+									"    });",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "https://wordsapiv1.p.mashape.com",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-Mashape-Key",
+								"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://wordsapiv1.p.mashape.com/words/{{ok_word}}",
+							"protocol": "https",
+							"host": [
+								"wordsapiv1",
+								"p",
+								"mashape",
+								"com"
+							],
+							"path": [
+								"words",
+								"{{ok_word}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Right key value with wrong value name from the docs",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('ok_word', pm.variables.replaceIn('{{$randomColor}}'))"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "{{host}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Mashape-Key",
+								"value": "{{auth_key}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/words/{{ok_word}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"words",
+								"{{ok_word}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get word details",
+			"item": [
+				{
+					"name": "Happy path for every detail (please, run the whole folder at once)",
+					"item": [
+						{
+							"name": "Happy path [0]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const details = ['definitions', 'synonyms', 'antonyms', 'examples', 'typeOf', 'hasTypes', 'partOf', 'hasParts', 'instanceOf', 'hasInstances', 'similarTo', 'also', 'entails', 'memberOf', 'hasMembers', 'substanceOf', 'hasSubstances', 'inCategory', 'hasCategories', 'usageOf', 'hasUsages', 'inRegion', 'regionOf', 'pertainsTo']",
+											"pm.environment.set('details', details)",
+											"var i = 0",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', details[i])"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [1]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [2]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [3]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [4]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [5]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [6]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [7]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [8]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [9]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [10]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [11]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [12]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [13]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [14]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [15]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [16]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [17]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [18]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [19]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [20]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [21]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [22]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Happy path [23]",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Detail in upper case",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var details = pm.environment.get('details')",
+											"var random_detail = details[Math.floor(Math.random()*details.length)]",
+											"pm.environment.set('random_detail_upper_case', random_detail.toUpperCase())"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var i = pm.variables.get('i')",
+											"var detail = (pm.variables.get('details')[i])",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([detail]);",
+											"    });",
+											"",
+											"",
+											"var i = i + 1",
+											"pm.environment.set('i', i)",
+											"pm.environment.set('detail', pm.variables.get('details')[i])",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{random_detail_upper_case}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{random_detail_upper_case}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Headers tests",
+					"item": [
+						{
+							"name": "No auth key value",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.message).to.eql('Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info.');",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var details = pm.environment.get('details')",
+											"pm.environment.set('random_detail', details[Math.floor(Math.random()*details.length)])"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{random_detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{random_detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "No auth key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.message).to.eql('Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info.');",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var details = pm.environment.get('details')",
+											"pm.environment.set('random_detail', details[Math.floor(Math.random()*details.length)])"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{random_detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{random_detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "No host in header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    pm.expect(pm.response.text()).to.include([pm.environment.get(['random_detail'])]);",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var details = pm.environment.get('details')",
+											"pm.environment.set('random_detail', details[Math.floor(Math.random()*details.length)])"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text",
+										"disabled": true
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{random_detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{random_detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Wrong host in header",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var details = pm.environment.get('details')",
+											"pm.environment.set('random_detail', details[Math.floor(Math.random()*details.length)])"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "https://wordsapiv1.p.mashape.com",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{random_detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{random_detail}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Wrong auth key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {",
+											"    pm.response.to.have.status(403);",
+											"});",
+											"",
+											"pm.test(\"Response time is less than limit\", function() {",
+											"    var limit = 120 * 1000;",
+											"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+											"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+											"    });",
+											"",
+											"pm.test(\"Response json structure test\", function() {",
+											"    var responseJson = pm.response.json();",
+											"    pm.expect(responseJson.message).to.eql('You are not subscribed to this API.');",
+											"    });",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var details = pm.environment.get('details')",
+											"pm.environment.set('random_detail', details[Math.floor(Math.random()*details.length)])"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Host",
+										"value": "{{host}}",
+										"type": "text"
+									},
+									{
+										"key": "X-RapidAPI-Key",
+										"value": "{{wrong_auth_key}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "https://{{host}}/words/word/{{random_detail}}",
+									"protocol": "https",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"words",
+										"word",
+										"{{random_detail}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Empty detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "https://wordsapiv1.p.rapidapi.com",
+								"type": "text"
+							},
+							{
+								"key": "X-RapidAPI-Key",
+								"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/words/word/",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"words",
+								"word",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Non-existent detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "https://wordsapiv1.p.rapidapi.com",
+								"type": "text"
+							},
+							{
+								"key": "X-RapidAPI-Key",
+								"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/words/word/testdetail",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"words",
+								"word",
+								"testdetail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Detail of one symbol",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "https://wordsapiv1.p.rapidapi.com",
+								"type": "text"
+							},
+							{
+								"key": "X-RapidAPI-Key",
+								"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/words/word/a",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"words",
+								"word",
+								"a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trying to reach max length limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var word = '{{$randomColor}}'",
+									"var long_word = word.repeat(1000)",
+									"pm.environment.set('long_word', long_word)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "https://wordsapiv1.p.rapidapi.com",
+								"type": "text"
+							},
+							{
+								"key": "X-RapidAPI-Key",
+								"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/words/word/{{word_spchar}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"words",
+								"word",
+								"{{word_spchar}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Detail of special characters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const characters ='!@#$%^&*()_-=+/?,.<>\"~`;:';",
+									"var word_spchar= Math.random().toString(10)",
+									"pm.environment.set('word_spchar', word_spchar)   "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "https://wordsapiv1.p.rapidapi.com",
+								"type": "text"
+							},
+							{
+								"key": "X-RapidAPI-Key",
+								"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/words/word/{{word_spchar}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"words",
+								"word",
+								"{{word_spchar}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Digits in details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than limit\", function() {",
+									"    var limit = 120 * 1000;",
+									"    pm.expect(pm.response.responseTime).to.be.below(limit);",
+									"    console.log(\"Response Time: \" + pm.response.responseTime + \" ms\");",
+									"    });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var word_digits = pm.variables.replaceIn('{{$randomInt}}')",
+									"pm.environment.set('word_digits', word_digits)",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Host",
+								"value": "https://wordsapiv1.p.rapidapi.com",
+								"type": "text"
+							},
+							{
+								"key": "X-RapidAPI-Key",
+								"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{host}}/words/word/{{word_digits}}",
+							"protocol": "https",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"words",
+								"word",
+								"{{word_digits}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "auth_key",
+			"value": "66ef45eb8amsh5471d964edc9042p12b4dajsn80565566cd70"
+		},
+		{
+			"key": "host",
+			"value": "wordsapiv1.p.rapidapi.com"
+		}
+	]
+}
